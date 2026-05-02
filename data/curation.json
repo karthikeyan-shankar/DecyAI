@@ -62,6 +62,22 @@
       "bestPaidUse": "Visual content, social posts, brand assets, presentations, and simple marketing material.",
       "reasons": ["Huge template library", "Easy for non-designers", "Broad small-business fit"]
     },
+    "looka": {
+      "status": "verified",
+      "score": 84,
+      "confidence": 0.84,
+      "sourceUrl": "https://looka.com/",
+      "bestPaidUse": "Quick logo concepts, brand kits, and small-business visual identity.",
+      "reasons": ["Fast logo creation", "Useful brand kit workflow", "Good for non-designers"]
+    },
+    "kittl": {
+      "status": "verified",
+      "score": 83,
+      "confidence": 0.84,
+      "sourceUrl": "https://www.kittl.com/",
+      "bestPaidUse": "Social media graphics, merch designs, posters, and template-based brand visuals.",
+      "reasons": ["Strong design templates", "Good for social content", "Beginner-friendly"]
+    },
     "figma": {
       "status": "verified",
       "score": 88,
