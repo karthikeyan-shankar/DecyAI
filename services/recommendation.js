@@ -17,7 +17,8 @@ class RecommendationEngine {
 
         // Backup: Gemini
         this.geminiKey = geminiKey;
-        this.genAI = geminiKey ? new GoogleGenerativeAI(geminiKey) : null;
+        this.hasGeminiKey = !!geminiKey && geminiKey !== 'your_gemini_api_key_here';
+        this.genAI = this.hasGeminiKey ? new GoogleGenerativeAI(geminiKey) : null;
 
         // Load tools (dynamic - reloads when new tools are added by scraper)
         this.toolsPath = path.join(__dirname, '..', 'data', 'tools.json');
@@ -78,7 +79,7 @@ class RecommendationEngine {
 
         try {
             // Try Gemini first for smart matching
-            if (this.genAI && this.geminiKey !== 'your_gemini_api_key_here') {
+            if (this.genAI && this.hasGeminiKey) {
                 const result = await this.getGeminiRecommendation(userQuery, budgetType);
                 if (result && result.tools && result.tools.length > 0) {
                     console.log('[DECY] Gemini response successful');
@@ -256,6 +257,13 @@ Please make it polished and ready to use.`;
     async handleChat(message, history = []) {
         console.log(`[DECY] Chat: "${message}" (history: ${history.length} messages)`);
 
+        // Fast local understanding first. This guarantees useful cards/guides even
+        // when API keys are missing, rate-limited, or temporarily down.
+        const localResponse = this.getLocalStructuredResponse(message, history);
+        if (localResponse) {
+            return localResponse;
+        }
+
         // Try Groq first (fast & reliable)
         if (this.groq) {
             try {
@@ -267,7 +275,7 @@ Please make it polished and ready to use.`;
         }
 
         // Try Gemini as backup
-        if (this.genAI && this.geminiKey !== 'your_gemini_api_key_here') {
+        if (this.genAI && this.hasGeminiKey) {
             try {
                 const response = await this.getSmartResponse(message, history);
                 return response;
@@ -278,6 +286,214 @@ Please make it polished and ready to use.`;
 
         // Fallback to keyword matching
         return this.getSmartFallback(message, history);
+    }
+
+    /**
+     * Deterministic chat brain that returns the same rich response contract as the UI.
+     * This makes DECY useful even before an LLM is configured.
+     */
+    getLocalStructuredResponse(message, history = []) {
+        const msg = message.toLowerCase().trim();
+        const analysis = this.intelligence.analyzeIntent(message);
+
+        if (analysis.isGuidance && analysis.tool) {
+            return this.buildGuideResponse(analysis.tool, message);
+        }
+
+        const toolAnswer = this.getToolAnswerFromDatabase(msg);
+        if (toolAnswer) {
+            return toolAnswer;
+        }
+
+        if (analysis.matched && analysis.tools.length > 0 && analysis.confidence >= 0.25) {
+            if (this.isWorkflowRequest(msg)) {
+                return this.buildWorkflowResponse(analysis, message);
+            }
+
+            const goal = this.normalizeUserGoal(message);
+            const topTools = analysis.tools.slice(0, 3);
+            const toolIds = topTools.map(tool => tool.id);
+
+            return {
+                success: true,
+                type: 'show_tools',
+                budget: 'free',
+                toolIds,
+                readyPrompt: this.buildReadyPrompt(topTools[0], goal),
+                response: this.buildRecommendationMessage(topTools, goal),
+                followUps: this.intelligence.getFollowUpSuggestions(analysis.category, toolIds, goal)
+            };
+        }
+
+        return null;
+    }
+
+    isWorkflowRequest(message) {
+        return /launch|start a business|startup|full plan|step by step|workflow|from scratch|end to end|complete plan|brand and market|build and market/i.test(message);
+    }
+
+    buildRecommendationMessage(tools, userQuery) {
+        const names = tools.map(tool => tool.name).join(', ');
+        const top = tools[0];
+        return `For "${userQuery}", I would start with ${top.name} and keep ${names} as your best options. ${top.name} fits especially well because ${top.whySuitsYou || top.bestFor}.`;
+    }
+
+    buildReadyPrompt(tool, userQuery) {
+        if (!tool || !tool.acceptsPrompt) return null;
+
+        return `I want to ${userQuery}. Create a practical, polished result for me. Ask only if a critical detail is missing, otherwise choose sensible defaults. Prioritize speed, clarity, beginner-friendly steps, and an output I can use immediately.`;
+    }
+
+    buildWorkflowResponse(analysis, userQuery) {
+        const goal = this.normalizeUserGoal(userQuery);
+        const tools = this.collectWorkflowTools(analysis, goal).slice(0, 5);
+        const steps = tools.map((tool, index) => ({
+            step: index + 1,
+            title: this.getWorkflowStepTitle(tool, index),
+            tool_id: tool.id,
+            tool_name: tool.name,
+            prompt: this.buildReadyPrompt(tool, goal) || `Help me ${goal} using ${tool.name}. Give me the fastest practical next step.`
+        }));
+
+        return {
+            success: true,
+            type: 'show_workflow',
+            steps,
+            response: `Here is a practical workflow for "${goal}" using tools that match each stage.`,
+            followUps: this.intelligence.getFollowUpSuggestions(analysis.category, tools.map(tool => tool.id), goal)
+        };
+    }
+
+    collectWorkflowTools(analysis, userQuery) {
+        const selected = [];
+        const added = new Set();
+        const addTools = (tools, targetCount) => {
+            for (const tool of tools) {
+                if (added.has(tool.id)) continue;
+                selected.push(tool);
+                added.add(tool.id);
+                if (selected.length >= targetCount) break;
+            }
+        };
+
+        addTools(analysis.tools, 2);
+
+        const categorySignals = [
+            { category: 'design', pattern: /logo|brand|branding|poster|flyer|banner|social|instagram|design/i },
+            { category: 'video_creation', pattern: /video|reel|short|youtube|tiktok|clip|demo|promo/i },
+            { category: 'writing', pattern: /copy|caption|blog|article|script|email|content|landing page text/i },
+            { category: 'automation', pattern: /automate|workflow|zapier|crm|lead|email follow|schedule|connect/i },
+            { category: 'research', pattern: /research|competitor|\bmarket research\b|sources|study|learn/i },
+            { category: 'presentation', pattern: /pitch|deck|slides|presentation/i }
+        ];
+
+        for (const signal of categorySignals) {
+            if (!signal.pattern.test(userQuery)) continue;
+            const category = this.tools.categories[signal.category];
+            if (!category) continue;
+            const categoryTools = category.tools
+                .filter(tool => tool.pricing?.free)
+                .sort((a, b) => (b.ease || 3) - (a.ease || 3))
+                .map(tool => ({
+                    ...tool,
+                    categoryKey: signal.category,
+                    categoryName: category.name
+                }));
+            addTools(categoryTools, selected.length + 1);
+        }
+
+        return selected.length > 0 ? selected : analysis.tools;
+    }
+
+    normalizeUserGoal(message) {
+        return message
+            .trim()
+            .replace(/^(please\s+)?(can you\s+)?(give me|show me|make me|help me|i need to|i want to|i wanna|recommend|find me)\s+/i, '')
+            .replace(/^(a\s+)?complete\s+plan\s+to\s+/i, '')
+            .replace(/^(a\s+)?step[-\s]?by[-\s]?step\s+(workflow|plan)\s+to\s+/i, '')
+            .trim();
+    }
+
+    getWorkflowStepTitle(tool, index) {
+        const titles = [
+            'Create the first version',
+            'Improve the output',
+            'Polish and package it',
+            'Publish or share',
+            'Automate the repeat work'
+        ];
+
+        if (/design|canva|figma|looka|kittl/i.test(`${tool.id} ${tool.name}`)) return 'Design the visual layer';
+        if (/video|capcut|runway|invideo|descript/i.test(`${tool.id} ${tool.name}`)) return 'Create the video content';
+        if (/write|copy|notion|jasper|grammarly/i.test(`${tool.id} ${tool.name}`)) return 'Write the content';
+        if (/zapier|make|automation/i.test(`${tool.id} ${tool.name}`)) return 'Automate the workflow';
+
+        return titles[index] || 'Finish the workflow';
+    }
+
+    buildGuideResponse(tool, userQuery) {
+        const action = tool.promptHint || tool.bestFor || 'describe what you want';
+        const steps = [
+            `Open ${tool.name} at ${tool.url}.`,
+            `Start a new project and choose the option closest to: ${action}.`,
+            `Describe your goal clearly: "${userQuery}". Include audience, style, format, deadline, and any must-have details.`,
+            'Review the first result, then ask the tool for one focused improvement at a time.',
+            'Export, publish, or share the finished output from the tool.'
+        ];
+
+        return {
+            success: true,
+            type: 'show_guide',
+            toolName: tool.name,
+            toolUrl: tool.url,
+            steps,
+            proTips: [
+                'Give examples of the style you want instead of only saying "make it good".',
+                'Ask for 2-3 variations before choosing the final direction.',
+                'Keep your first prompt specific, then iterate in small changes.'
+            ],
+            response: `Here is a clear way to use ${tool.name} for this.`,
+            followUps: this.intelligence.getFollowUpSuggestions(tool.categoryKey, [tool.id], userQuery)
+        };
+    }
+
+    getToolAnswerFromDatabase(message) {
+        const matchedTool = this.intelligence.allToolsFlat.find(tool => {
+            const name = tool.name.toLowerCase();
+            const id = tool.id.toLowerCase().replace(/_/g, ' ');
+            return message.includes(name) || message.includes(id);
+        });
+
+        if (!matchedTool) return null;
+
+        if (/alternative|similar|instead|free alternative|better than/i.test(message)) {
+            const categoryTools = this.intelligence.allToolsFlat
+                .filter(tool => tool.categoryKey === matchedTool.categoryKey && tool.id !== matchedTool.id)
+                .slice(0, 3);
+
+            return {
+                success: true,
+                type: 'show_tools',
+                budget: 'free',
+                toolIds: categoryTools.map(tool => tool.id),
+                readyPrompt: categoryTools[0] ? this.buildReadyPrompt(categoryTools[0], message) : null,
+                response: `Here are strong alternatives to ${matchedTool.name} for ${matchedTool.categoryName.toLowerCase()}.`,
+                followUps: this.intelligence.getFollowUpSuggestions(matchedTool.categoryKey, categoryTools.map(tool => tool.id), message)
+            };
+        }
+
+        if (/how to|guide|tutorial|use|start/i.test(message)) {
+            return this.buildGuideResponse(matchedTool, message);
+        }
+
+        const freeText = matchedTool.pricing?.free ? 'It has a free tier' : 'It does not appear to have a free tier';
+        const premiumText = matchedTool.pricing?.premium ? ` Premium is ${matchedTool.pricing.premium}.` : '';
+
+        return {
+            success: true,
+            type: 'chat',
+            response: `${matchedTool.name} is best for ${matchedTool.bestFor}. ${freeText}.${premiumText} It is a good fit when you need ${matchedTool.whySuitsYou || matchedTool.bestFor}.`
+        };
     }
 
     /**

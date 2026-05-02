@@ -57,7 +57,7 @@ class DecyIntelligence {
                 priority: ['lovable', 'bolt', 'v0']
             },
             {
-                intents: ['app', 'mobile app', 'web app', 'build app', 'create app', 'develop app', 'mvp', 'prototype'],
+                intents: ['app', 'mobile app', 'web app', 'build app', 'create app', 'develop app', 'mvp', 'prototype', 'dashboard', 'internal tool', 'client portal', 'booking system', 'marketplace'],
                 category: 'app_building',
                 context: 'The user wants to build a functional application. Recommend no-code/low-code builders that can create real, deployable apps.',
                 priority: ['lovable', 'bolt', 'replit']
@@ -71,7 +71,7 @@ class DecyIntelligence {
                 priority: ['looka', 'canva_design', 'kittl']
             },
             {
-                intents: ['poster', 'flyer', 'banner', 'social media post', 'instagram post', 'thumbnail', 'cover image', 'marketing material'],
+                intents: ['poster', 'flyer', 'banner', 'social media post', 'instagram post', 'thumbnail', 'cover image', 'marketing material', 'ad creative', 'brochure', 'invitation', 'menu design'],
                 category: 'design',
                 context: 'The user wants to create visual marketing content. Recommend design tools with templates for social media and marketing.',
                 priority: ['canva_design', 'kittl', 'figma']
@@ -99,7 +99,7 @@ class DecyIntelligence {
 
             // === VIDEO ===
             {
-                intents: ['video', 'edit video', 'reel', 'short', 'youtube', 'tiktok', 'clip', 'montage'],
+                intents: ['video', 'edit video', 'reel', 'short', 'youtube', 'tiktok', 'clip', 'montage', 'subtitles', 'captions', 'podcast clips', 'long video to shorts'],
                 category: 'video_creation',
                 context: 'The user wants to create or edit video content. Recommend video editing tools.',
                 priority: ['capcut', 'descript', 'invideo']
@@ -119,7 +119,7 @@ class DecyIntelligence {
 
             // === WRITING ===
             {
-                intents: ['write', 'blog', 'article', 'essay', 'content', 'copywriting', 'email', 'marketing copy'],
+                intents: ['write', 'blog', 'article', 'essay', 'content', 'copywriting', 'email', 'marketing copy', 'caption', 'linkedin post', 'product description', 'script'],
                 category: 'writing',
                 context: 'The user wants to write or generate text content. Recommend AI writing tools.',
                 priority: ['notion_ai', 'copy_ai', 'jasper']
@@ -133,7 +133,7 @@ class DecyIntelligence {
 
             // === CODING ===
             {
-                intents: ['code', 'programming', 'debug', 'developer', 'coding assistant', 'autocomplete', 'copilot'],
+                intents: ['code', 'programming', 'debug', 'developer', 'coding assistant', 'autocomplete', 'copilot', 'fix bug', 'explain code', 'generate code', 'api integration'],
                 category: 'coding_assistance',
                 context: 'The user needs help with coding or programming. Recommend AI coding assistants.',
                 priority: ['cursor', 'github_copilot', 'chatgpt']
@@ -169,10 +169,18 @@ class DecyIntelligence {
                 priority: ['otter', 'fireflies', 'granola']
             },
             {
-                intents: ['research', 'find information', 'academic', 'papers', 'study'],
+                intents: ['research', 'find information', 'academic', 'papers', 'study', 'sources', 'citations', 'summarize pdf', 'learn topic', 'competitor research', 'market research'],
                 category: 'research',
                 context: 'The user needs help with research or finding information. Recommend AI research tools.',
                 priority: ['perplexity', 'elicit', 'consensus']
+            },
+
+            // === AUTOMATION ===
+            {
+                intents: ['automate', 'automation', 'workflow', 'connect apps', 'zapier', 'crm', 'lead capture', 'send emails', 'sync data', 'calendar scheduling'],
+                category: 'automation',
+                context: 'The user wants to automate repetitive work or connect tools together. Recommend automation platforms that save time.',
+                priority: ['zapier', 'make', 'notion_automations']
             },
 
             // === RESUME (special - crosses categories) ===
@@ -198,7 +206,10 @@ class DecyIntelligence {
             return guidance;
         }
 
-        const words = query.split(/\s+/);
+        const words = query
+            .replace(/[^\w\s-]/g, ' ')
+            .split(/\s+/)
+            .filter(Boolean);
 
         let bestMatch = null;
         let bestScore = 0;
@@ -215,6 +226,7 @@ class DecyIntelligence {
                 // Individual word matches
                 const intentWords = intent.split(' ');
                 for (const iw of intentWords) {
+                    if (iw.length < 3) continue;
                     if (words.includes(iw)) {
                         score += 5;
                     }
