@@ -299,6 +299,10 @@ Please make it polished and ready to use.`;
         const msg = message.toLowerCase().trim();
         const analysis = this.intelligence.analyzeIntent(message);
 
+        if (this.isStackRequest(msg)) {
+            return this.buildStackResponse(message);
+        }
+
         if (analysis.isGuidance && analysis.tool) {
             return this.buildGuideResponse(analysis.tool, message);
         }
@@ -333,6 +337,127 @@ Please make it polished and ready to use.`;
 
     isWorkflowRequest(message) {
         return /launch|start a business|startup|full plan|step by step|workflow|from scratch|end to end|complete plan|brand and market|build and market/i.test(message);
+    }
+
+    isStackRequest(message) {
+        return /ai stack|tool stack|stack builder|build my stack|build my ai stack|best stack|toolkit|tools for me|starter stack|my ai tools/i.test(message);
+    }
+
+    buildStackResponse(userQuery) {
+        const goal = this.normalizeStackGoal(userQuery);
+        const persona = this.detectStackPersona(goal);
+        const stack = this.getStackPreset(persona);
+        const steps = stack.tools
+            .map((item, index) => {
+                const tool = this.findToolById(item.toolId);
+                if (!tool) return null;
+
+                return {
+                    step: index + 1,
+                    title: item.title,
+                    tool_id: tool.id,
+                    tool_name: tool.name,
+                    prompt: item.prompt.replace('{goal}', goal || stack.label)
+                };
+            })
+            .filter(Boolean);
+
+        return {
+            success: true,
+            type: 'show_workflow',
+            response: `Here is a lean ${stack.label} AI stack. Start with these before paying for anything else.`,
+            steps,
+            followUps: [
+                {
+                    text: 'Compare this stack',
+                    message: `Compare the tools in this ${stack.label} AI stack`
+                },
+                {
+                    text: 'Make it free-only',
+                    message: `Build a free-only AI stack for ${goal || stack.label}`
+                },
+                {
+                    text: 'Give me weekly workflow',
+                    message: `Give me a weekly workflow using this AI stack for ${goal || stack.label}`
+                }
+            ]
+        };
+    }
+
+    detectStackPersona(goal) {
+        if (/student|assignment|college|school|study|resume/i.test(goal)) return 'student';
+        if (/freelance|client|agency|service|portfolio/i.test(goal)) return 'freelancer';
+        if (/business|shop|cafe|restaurant|local|small business/i.test(goal)) return 'small_business';
+        if (/creator|youtube|instagram|reel|tiktok|content/i.test(goal)) return 'creator';
+        if (/startup|founder|mvp|saas|pitch|investor/i.test(goal)) return 'founder';
+        return 'starter';
+    }
+
+    getStackPreset(persona) {
+        const stacks = {
+            student: {
+                label: 'student',
+                tools: [
+                    { title: 'Research with citations', toolId: 'perplexity', prompt: 'Research {goal}. Give me the key points, sources, and what to verify.' },
+                    { title: 'Study documents faster', toolId: 'notebooklm', prompt: 'Turn my notes for {goal} into summaries, questions, and revision points.' },
+                    { title: 'Create presentations', toolId: 'gamma', prompt: 'Create a simple presentation for {goal} with clear slide titles and speaker notes.' },
+                    { title: 'Polish writing', toolId: 'grammarly', prompt: 'Improve this writing for {goal}. Make it clear, correct, and professional.' },
+                    { title: 'Design resume or posters', toolId: 'canva_design', prompt: 'Create a clean student-friendly design for {goal}.' }
+                ]
+            },
+            freelancer: {
+                label: 'freelancer',
+                tools: [
+                    { title: 'Build client deliverables', toolId: 'chatgpt', prompt: 'Create a client-ready plan for {goal}. Include deliverables, timeline, and pricing notes.' },
+                    { title: 'Design visuals', toolId: 'canva_design', prompt: 'Create polished client visuals for {goal} with a modern layout.' },
+                    { title: 'Build portfolio or landing page', toolId: 'lovable', prompt: 'Build a freelancer portfolio or landing page for {goal}. Include services, proof, and contact CTA.' },
+                    { title: 'Make pitch decks', toolId: 'gamma', prompt: 'Create a client proposal deck for {goal}.' },
+                    { title: 'Automate follow-ups', toolId: 'zapier', prompt: 'Create an automation workflow for leads, client follow-ups, and delivery reminders for {goal}.' }
+                ]
+            },
+            small_business: {
+                label: 'small business',
+                tools: [
+                    { title: 'Create brand assets', toolId: 'canva_design', prompt: 'Create brand visuals for {goal}. Include logo direction, colors, social posts, and offer graphics.' },
+                    { title: 'Build a website', toolId: 'lovable', prompt: 'Build a simple business website for {goal}. Include home, services, gallery, testimonials, and contact.' },
+                    { title: 'Create short videos', toolId: 'capcut', prompt: 'Create short promotional video ideas for {goal}. Include hooks, captions, and shot list.' },
+                    { title: 'Research competitors', toolId: 'perplexity', prompt: 'Research competitors for {goal}. Summarize offers, pricing, positioning, and gaps.' },
+                    { title: 'Automate leads', toolId: 'zapier', prompt: 'Automate lead capture and follow-up for {goal} using forms, email, and reminders.' }
+                ]
+            },
+            creator: {
+                label: 'creator',
+                tools: [
+                    { title: 'Research content ideas', toolId: 'perplexity', prompt: 'Find content ideas for {goal}. Include hooks, angles, and sources.' },
+                    { title: 'Write scripts', toolId: 'chatgpt', prompt: 'Write 10 short-form video scripts for {goal}. Include hooks and CTAs.' },
+                    { title: 'Edit short videos', toolId: 'capcut', prompt: 'Create an editing plan for {goal}. Include captions, pacing, and cuts.' },
+                    { title: 'Create visuals', toolId: 'canva_design', prompt: 'Create thumbnails and social graphics for {goal}.' },
+                    { title: 'Generate voiceovers', toolId: 'elevenlabs', prompt: 'Create a voiceover script and tone guide for {goal}.' }
+                ]
+            },
+            founder: {
+                label: 'founder',
+                tools: [
+                    { title: 'Research market and competitors', toolId: 'perplexity', prompt: 'Research the market for {goal}. Include competitors, users, pricing, and risks.' },
+                    { title: 'Build MVP', toolId: 'lovable', prompt: 'Build an MVP for {goal}. Include core features, auth, dashboard, and deployment.' },
+                    { title: 'Improve UI', toolId: 'v0', prompt: 'Create polished UI components for {goal}. Include dashboard, cards, pricing, and mobile states.' },
+                    { title: 'Create pitch deck', toolId: 'gamma', prompt: 'Create a pitch deck for {goal}. Include problem, solution, market, product, traction, and ask.' },
+                    { title: 'Automate ops', toolId: 'zapier', prompt: 'Create automations for user signups, feedback, onboarding, and follow-up for {goal}.' }
+                ]
+            },
+            starter: {
+                label: 'starter',
+                tools: [
+                    { title: 'Think and write', toolId: 'chatgpt', prompt: 'Help me plan {goal}. Give me the fastest practical path and tools.' },
+                    { title: 'Research facts', toolId: 'perplexity', prompt: 'Research {goal}. Give me accurate sources and next steps.' },
+                    { title: 'Design visuals', toolId: 'canva_design', prompt: 'Create clean visuals for {goal}.' },
+                    { title: 'Build a page or app', toolId: 'lovable', prompt: 'Build a simple useful version of {goal}.' },
+                    { title: 'Automate repeat work', toolId: 'zapier', prompt: 'Automate the repetitive parts of {goal}.' }
+                ]
+            }
+        };
+
+        return stacks[persona] || stacks.starter;
     }
 
     buildRecommendationMessage(tools, userQuery) {
@@ -415,6 +540,15 @@ Please make it polished and ready to use.`;
             .replace(/^(a\s+)?complete\s+plan\s+to\s+/i, '')
             .replace(/^(a\s+)?step[-\s]?by[-\s]?step\s+(workflow|plan)\s+to\s+/i, '')
             .trim();
+    }
+
+    normalizeStackGoal(message) {
+        const goal = this.normalizeUserGoal(message)
+            .replace(/^(please\s+)?(build|create|make|recommend|give me)\s+(my\s+)?(ai\s+)?(tool\s+)?stack\s+(for\s+)?/i, '')
+            .replace(/^(a\s+)?(free-only\s+)?(ai\s+)?stack\s+(for\s+)?/i, '')
+            .trim();
+
+        return goal || 'getting work done faster with AI';
     }
 
     getWorkflowStepTitle(tool, index) {
