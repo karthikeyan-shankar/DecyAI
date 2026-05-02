@@ -114,7 +114,7 @@ class DecyIntelligence {
                 intents: ['talking head', 'avatar video', 'spokesperson', 'virtual presenter'],
                 category: 'video_creation',
                 context: 'The user wants AI-generated talking head or avatar videos. Recommend avatar video tools.',
-                priority: ['heygen', 'synthesia', 'd-id']
+                priority: ['heygen', 'synthesia', 'invideo']
             },
 
             // === WRITING ===
@@ -152,7 +152,7 @@ class DecyIntelligence {
                 intents: ['voice', 'voiceover', 'text to speech', 'narration', 'dubbing', 'voice clone'],
                 category: 'audio',
                 context: 'The user needs text-to-speech, voiceovers, or voice generation. Recommend voice AI tools.',
-                priority: ['elevenlabs', 'murf', 'play_ht']
+                priority: ['elevenlabs', 'murf', 'speechify']
             },
             {
                 intents: ['music', 'song', 'beat', 'soundtrack', 'jingle', 'compose'],
@@ -164,15 +164,15 @@ class DecyIntelligence {
             // === PRODUCTIVITY ===
             {
                 intents: ['meeting notes', 'transcribe', 'summarize meeting', 'meeting summary'],
-                category: 'productivity',
+                category: 'automation',
                 context: 'The user wants to transcribe or summarize meetings. Recommend meeting AI tools.',
-                priority: ['otter', 'fireflies', 'granola']
+                priority: ['granola', 'otter_ai', 'fireflies_ai']
             },
             {
                 intents: ['research', 'find information', 'academic', 'papers', 'study', 'sources', 'citations', 'summarize pdf', 'learn topic', 'competitor research', 'market research'],
                 category: 'research',
                 context: 'The user needs help with research or finding information. Recommend AI research tools.',
-                priority: ['perplexity', 'elicit', 'consensus']
+                priority: ['perplexity', 'elicit', 'semantic_scholar']
             },
 
             // === AUTOMATION ===

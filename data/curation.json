@@ -1,0 +1,170 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "lastReviewed": "2026-05-02",
+    "method": "Manual MVP curation based on official product positioning, availability, category fit, beginner usefulness, and repeat-work value.",
+    "scoreMeaning": "0-100 score estimating whether a tool is worth recommending to busy users."
+  },
+  "tools": {
+    "chatgpt": {
+      "status": "verified",
+      "score": 96,
+      "confidence": 0.95,
+      "sourceUrl": "https://chatgpt.com/",
+      "bestPaidUse": "General work assistant, writing, analysis, coding help, and everyday productivity.",
+      "reasons": ["Broad use cases", "Strong general assistant", "High repeat usage"]
+    },
+    "claude": {
+      "status": "verified",
+      "score": 94,
+      "confidence": 0.93,
+      "sourceUrl": "https://claude.ai/",
+      "bestPaidUse": "Long-form writing, document analysis, coding support, and thoughtful reasoning.",
+      "reasons": ["Excellent long-context work", "Strong writing quality", "Useful for professionals"]
+    },
+    "perplexity": {
+      "status": "verified",
+      "score": 93,
+      "confidence": 0.94,
+      "sourceUrl": "https://www.perplexity.ai/",
+      "bestPaidUse": "Fast research with cited sources and current information discovery.",
+      "reasons": ["Research-focused", "Source-backed answers", "Saves search time"]
+    },
+    "cursor": {
+      "status": "verified",
+      "score": 92,
+      "confidence": 0.92,
+      "sourceUrl": "https://cursor.com/",
+      "bestPaidUse": "AI coding inside a developer editor for building and refactoring real projects.",
+      "reasons": ["Strong developer workflow", "High willingness to pay", "Clear productivity ROI"]
+    },
+    "lovable": {
+      "status": "verified",
+      "score": 91,
+      "confidence": 0.9,
+      "sourceUrl": "https://lovable.dev/",
+      "bestPaidUse": "Turning app ideas into working web apps quickly without heavy setup.",
+      "reasons": ["Fast MVP creation", "Beginner-friendly", "Strong startup use case"]
+    },
+    "bolt": {
+      "status": "verified",
+      "score": 90,
+      "confidence": 0.9,
+      "sourceUrl": "https://bolt.new/",
+      "bestPaidUse": "Browser-based app prototyping and quick frontend/backend experiments.",
+      "reasons": ["Very fast prototyping", "Low setup friction", "Good for demos"]
+    },
+    "canva_design": {
+      "status": "verified",
+      "score": 90,
+      "confidence": 0.94,
+      "sourceUrl": "https://www.canva.com/",
+      "bestPaidUse": "Visual content, social posts, brand assets, presentations, and simple marketing material.",
+      "reasons": ["Huge template library", "Easy for non-designers", "Broad small-business fit"]
+    },
+    "figma": {
+      "status": "verified",
+      "score": 88,
+      "confidence": 0.92,
+      "sourceUrl": "https://www.figma.com/",
+      "bestPaidUse": "Professional UI design, wireframes, prototypes, and product design collaboration.",
+      "reasons": ["Industry standard", "Strong collaboration", "Useful beyond AI novelty"]
+    },
+    "capcut": {
+      "status": "verified",
+      "score": 89,
+      "confidence": 0.9,
+      "sourceUrl": "https://www.capcut.com/",
+      "bestPaidUse": "Short-form video editing, captions, templates, and creator marketing videos.",
+      "reasons": ["Creator-friendly", "Fast social video output", "Useful free tier"]
+    },
+    "runway": {
+      "status": "verified",
+      "score": 88,
+      "confidence": 0.88,
+      "sourceUrl": "https://runwayml.com/",
+      "bestPaidUse": "AI video generation and advanced creative video workflows.",
+      "reasons": ["Strong AI video brand", "Professional creative use", "High-value output"]
+    },
+    "gamma": {
+      "status": "verified",
+      "score": 88,
+      "confidence": 0.9,
+      "sourceUrl": "https://gamma.app/",
+      "bestPaidUse": "Fast presentations, pitch decks, reports, and polished shareable docs.",
+      "reasons": ["Fast slide creation", "Business-friendly", "Clear repeat use"]
+    },
+    "elevenlabs": {
+      "status": "verified",
+      "score": 89,
+      "confidence": 0.9,
+      "sourceUrl": "https://elevenlabs.io/",
+      "bestPaidUse": "Realistic AI voiceovers, narration, dubbing, and creator audio.",
+      "reasons": ["High-quality voices", "Creator monetization use", "Clear output value"]
+    },
+    "suno": {
+      "status": "verified",
+      "score": 86,
+      "confidence": 0.86,
+      "sourceUrl": "https://suno.com/",
+      "bestPaidUse": "Generating songs, jingles, music ideas, and social audio experiments.",
+      "reasons": ["Unique creative output", "Easy to try", "Strong viral appeal"]
+    },
+    "zapier": {
+      "status": "verified",
+      "score": 91,
+      "confidence": 0.93,
+      "sourceUrl": "https://zapier.com/",
+      "bestPaidUse": "Automating repeat tasks across business apps without code.",
+      "reasons": ["Clear time-saving ROI", "Huge integrations", "Business subscription fit"]
+    },
+    "make": {
+      "status": "verified",
+      "score": 89,
+      "confidence": 0.9,
+      "sourceUrl": "https://www.make.com/",
+      "bestPaidUse": "Visual workflow automation for users who need more control than basic zaps.",
+      "reasons": ["Powerful workflows", "Good free entry", "Business automation use case"]
+    },
+    "notebooklm": {
+      "status": "verified",
+      "score": 87,
+      "confidence": 0.9,
+      "sourceUrl": "https://notebooklm.google.com/",
+      "bestPaidUse": "Learning from documents, summarizing notes, and research synthesis.",
+      "reasons": ["Strong document learning", "Useful for students and researchers", "Low friction"]
+    },
+    "ideogram": {
+      "status": "verified",
+      "score": 86,
+      "confidence": 0.87,
+      "sourceUrl": "https://ideogram.ai/",
+      "bestPaidUse": "Image generation with text, posters, logos, and social graphics.",
+      "reasons": ["Good text-in-image use", "Creator-friendly", "Clear visual output"]
+    },
+    "midjourney": {
+      "status": "verified",
+      "score": 87,
+      "confidence": 0.88,
+      "sourceUrl": "https://www.midjourney.com/",
+      "bestPaidUse": "High-quality artistic and commercial image generation.",
+      "reasons": ["Strong output quality", "Recognized creative tool", "Professional visual use"]
+    },
+    "grammarly": {
+      "status": "verified",
+      "score": 86,
+      "confidence": 0.9,
+      "sourceUrl": "https://www.grammarly.com/",
+      "bestPaidUse": "Polishing writing, emails, tone, grammar, and professional communication.",
+      "reasons": ["Repeat daily usage", "Clear productivity benefit", "Easy adoption"]
+    },
+    "replit": {
+      "status": "verified",
+      "score": 85,
+      "confidence": 0.86,
+      "sourceUrl": "https://replit.com/",
+      "bestPaidUse": "Coding, deploying small apps, and learning programming in one workspace.",
+      "reasons": ["Integrated build/deploy", "Education-friendly", "Useful for prototypes"]
+    }
+  }
+}

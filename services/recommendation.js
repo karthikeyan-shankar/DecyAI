@@ -8,6 +8,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const fs = require('fs');
 const path = require('path');
 const DecyIntelligence = require('./intelligence');
+const CurationService = require('./curation');
 
 class RecommendationEngine {
     constructor(geminiKey) {
@@ -24,6 +25,7 @@ class RecommendationEngine {
         this.toolsPath = path.join(__dirname, '..', 'data', 'tools.json');
         this.tools = this.loadTools();
         this.intelligence = new DecyIntelligence(this.tools);
+        this.curation = new CurationService();
 
         // Scraper for auto-discovery
         this.scraper = null; // lazy-loaded to avoid circular dependency
@@ -54,6 +56,7 @@ class RecommendationEngine {
      */
     refreshTools() {
         this.tools = this.loadTools();
+        this.intelligence = new DecyIntelligence(this.tools);
         console.log(`[DECY] Tools refreshed: ${this.tools.metadata?.totalTools || 0} tools`);
     }
 
@@ -125,7 +128,7 @@ class RecommendationEngine {
             source: 'ai_category',
             category: category.name,
             reasoning: `Here are the best ${budgetType} tools for ${this.extractKeyIntent(userQuery.toLowerCase())}:`,
-            tools: recommendations
+            tools: this.curation.enrichTools(recommendations, { query: userQuery })
         };
     }
 
@@ -143,7 +146,7 @@ class RecommendationEngine {
                 if (budgetType === 'free' && !tool.pricing.free) {
                     continue; // Skip non-free tools if user wants free
                 }
-                tools.push(tool);
+                tools.push(this.curation.enrichTool(tool, { rank: tools.length }));
             }
         }
 
@@ -976,7 +979,7 @@ IMPORTANT: Only use tool IDs from the database. Be concise. Maximum 3 tools.`;
             source: 'gemini',
             category: geminiResponse.category,
             reasoning: geminiResponse.reasoning,
-            tools: recommendations.slice(0, 3)
+            tools: this.curation.enrichTools(recommendations.slice(0, 3))
         };
     }
 
@@ -1056,7 +1059,7 @@ IMPORTANT: Only use tool IDs from the database. Be concise. Maximum 3 tools.`;
             source: 'fallback',
             category: category.name,
             reasoning: `Based on your query about "${this.extractKeyIntent(query)}", these tools are best suited for your needs.`,
-            tools: recommendations
+            tools: this.curation.enrichTools(recommendations, { query: userQuery })
         };
     }
 
@@ -1075,7 +1078,7 @@ IMPORTANT: Only use tool IDs from the database. Be concise. Maximum 3 tools.`;
             source: 'default',
             category: 'General AI',
             reasoning: 'Here are versatile AI tools that can help with many tasks.',
-            tools: generalTools.slice(0, 3)
+            tools: this.curation.enrichTools(generalTools.slice(0, 3))
         };
     }
 
@@ -1086,14 +1089,30 @@ IMPORTANT: Only use tool IDs from the database. Be concise. Maximum 3 tools.`;
         for (const category of Object.values(this.tools.categories)) {
             const tool = category.tools.find(t => t.id === toolId);
             if (tool) {
-                return {
+                return this.curation.enrichTool({
                     ...tool,
                     category: category.name,
                     categoryIcon: category.icon
-                };
+                });
             }
         }
         return null;
+    }
+
+    /**
+     * Product strategy and subscription readiness summary.
+     */
+    getProductStrategy() {
+        return {
+            success: true,
+            ...this.curation.getStrategySummary(),
+            verifiedTools: this.curation.getVerifiedTools().slice(0, 20),
+            currentDatabase: {
+                totalTools: this.tools.metadata?.totalTools || this.intelligence.allToolsFlat.length,
+                categories: Object.keys(this.tools.categories || {}).length,
+                curatedVerifiedTools: this.curation.getVerifiedTools().length
+            }
+        };
     }
 
     /**

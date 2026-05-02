@@ -159,6 +159,22 @@ app.post('/api/generate-prompt', async (req, res) => {
 });
 
 /**
+ * GET /api/product-strategy
+ * Subscription-readiness and verified-tool strategy for DECY.
+ */
+app.get('/api/product-strategy', (req, res) => {
+    try {
+        res.json(engine.getProductStrategy());
+    } catch (error) {
+        console.error('[DECY] Strategy error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to build product strategy'
+        });
+    }
+});
+
+/**
  * GET /api/categories
  * Get all available categories
  */
