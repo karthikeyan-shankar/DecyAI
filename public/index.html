@@ -764,27 +764,48 @@
                             tool</p>
                     </div>
 
-                    <!-- Suggestion Pills - Horizontal for desktop -->
-                    <div class="flex flex-wrap gap-2.5 justify-center max-w-2xl mb-8">
-                        <button onclick="setQuery('Build my AI stack for a small business')"
-                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all">
-                            <span class="text-[14px] font-medium tracking-tight">Build my AI stack</span>
+
+                    <!-- Stack Shortcuts -->
+                    <div class="flex flex-wrap gap-2 justify-center max-w-2xl mb-4">
+                        <button onclick="setQuery('Build my AI stack for a student'); sendMessage()"
+                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all border border-purple-500/20 hover:border-purple-500/40">
+                            <span>📚</span><span class="text-[14px] font-medium tracking-tight">Student Stack</span>
                         </button>
+                        <button onclick="setQuery('Build my AI stack for a freelancer'); sendMessage()"
+                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all border border-purple-500/20 hover:border-purple-500/40">
+                            <span>💼</span><span class="text-[14px] font-medium tracking-tight">Freelancer Stack</span>
+                        </button>
+                        <button onclick="setQuery('Build my AI stack for a founder'); sendMessage()"
+                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all border border-purple-500/20 hover:border-purple-500/40">
+                            <span>🚀</span><span class="text-[14px] font-medium tracking-tight">Founder Stack</span>
+                        </button>
+                        <button onclick="setQuery('Build my AI stack for a content creator'); sendMessage()"
+                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all border border-purple-500/20 hover:border-purple-500/40">
+                            <span>🎬</span><span class="text-[14px] font-medium tracking-tight">Creator Stack</span>
+                        </button>
+                        <button onclick="setQuery('Build my AI stack for a developer'); sendMessage()"
+                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all border border-purple-500/20 hover:border-purple-500/40">
+                            <span>⚡</span><span class="text-[14px] font-medium tracking-tight">Developer Stack</span>
+                        </button>
+                    </div>
+
+                    <!-- Regular Suggestion Pills -->
+                    <div class="flex flex-wrap gap-2 justify-center max-w-2xl mb-8">
                         <button onclick="setQuery('I want to create an app')"
-                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all">
-                            <span class="text-[14px] font-medium tracking-tight">Create an app</span>
+                            class="pill-button flex h-[36px] items-center gap-2 rounded-full px-3.5 transition-all">
+                            <span class="text-[13px] font-medium tracking-tight text-white/60">Create an app</span>
                         </button>
                         <button onclick="setQuery('I need to generate images')"
-                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all">
-                            <span class="text-[14px] font-medium tracking-tight">Generate images</span>
+                            class="pill-button flex h-[36px] items-center gap-2 rounded-full px-3.5 transition-all">
+                            <span class="text-[13px] font-medium tracking-tight text-white/60">Generate images</span>
                         </button>
                         <button onclick="setQuery('I want to edit videos')"
-                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all">
-                            <span class="text-[14px] font-medium tracking-tight">Edit videos</span>
+                            class="pill-button flex h-[36px] items-center gap-2 rounded-full px-3.5 transition-all">
+                            <span class="text-[13px] font-medium tracking-tight text-white/60">Edit videos</span>
                         </button>
                         <button onclick="setQuery('Help me write code')"
-                            class="pill-button flex h-[40px] items-center gap-2 rounded-full px-4 transition-all">
-                            <span class="text-[14px] font-medium tracking-tight">Write code</span>
+                            class="pill-button flex h-[36px] items-center gap-2 rounded-full px-3.5 transition-all">
+                            <span class="text-[13px] font-medium tracking-tight text-white/60">Write code</span>
                         </button>
                     </div>
                 </div>
@@ -1155,7 +1176,19 @@
                 const data = await response.json();
                 removeMessage(loadingId);
 
-                if (data.type === 'show_guide') {
+                if (data.type === 'show_stack') {
+                    // Stack Builder — curated multi-tool stack
+                    addMessage(data.response, 'assistant');
+                    chatHistory.push({ role: 'assistant', content: data.response });
+                    addStackCard(data.stack);
+                    if (data.followUps) addFollowUpSuggestions(data.followUps);
+                } else if (data.type === 'show_all_stacks') {
+                    // Browse all stacks
+                    addMessage(data.response, 'assistant');
+                    chatHistory.push({ role: 'assistant', content: data.response });
+                    addAllStacksGrid(data.stacks);
+                    if (data.followUps) addFollowUpSuggestions(data.followUps);
+                } else if (data.type === 'show_guide') {
                     // AI generated a step-by-step guide for a specific tool
                     addMessage(data.response, 'assistant');
                     chatHistory.push({ role: 'assistant', content: data.response });
@@ -1345,6 +1378,100 @@
             container.insertAdjacentHTML('beforeend', html);
             scrollToBottom();
         }
+
+        // ========== STACK BUILDER RENDERING ==========
+
+        function addStackCard(stack) {
+            const container = document.getElementById('messages');
+
+            const toolsHtml = stack.tools.map((tool, i) => {
+                const isLast = i === stack.tools.length - 1;
+                return `
+                    <div class="flex gap-3 items-start ${i > 0 ? 'mt-1' : ''}">
+                        <div class="flex flex-col items-center">
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-500/30 to-violet-600/30 border border-purple-500/20 flex items-center justify-center text-white text-[13px] font-bold flex-shrink-0">
+                                ${tool.step}
+                            </div>
+                            ${!isLast ? '<div class="w-[2px] bg-gradient-to-b from-purple-500/30 to-transparent flex-1 min-h-[60px] mt-1"></div>' : ''}
+                        </div>
+                        <div class="flex-1 pb-3">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="text-[10px] font-bold tracking-[0.08em] text-purple-400/70 uppercase">${escapeHtml(tool.role)}</span>
+                            </div>
+                            <h4 class="text-[15px] font-bold text-white tracking-tight">${escapeHtml(tool.name)}</h4>
+                            <p class="text-[13px] text-white/60 leading-snug mt-0.5">${escapeHtml(tool.why)}</p>
+                            <div class="flex items-center gap-2 mt-1.5">
+                                <span class="text-[11px] text-emerald-400/80 font-medium">✓ ${escapeHtml(tool.freeLimit)}</span>
+                            </div>
+                            <div class="mt-2 bg-white/[0.03] border border-white/[0.06] rounded-lg px-3 py-2 group cursor-pointer hover:bg-white/[0.06] transition-all" onclick="copyPrompt(this, '${escapeHtml(tool.prompt).replace(/'/g, "\\'")}')"> 
+                                <div class="flex items-start justify-between gap-2">
+                                    <p class="text-[11px] text-white/40 leading-relaxed italic line-clamp-2">"${escapeHtml(tool.prompt)}"</p>
+                                    <span class="material-symbols-outlined text-[13px] text-white/20 group-hover:text-white/50 flex-shrink-0 mt-0.5 transition-colors">content_copy</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            const html = `
+                <div class="mb-4">
+                    <div class="recommendation-card rounded-2xl p-5 border border-purple-500/20">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="text-[28px]">${stack.emoji}</span>
+                                <div>
+                                    <h3 class="text-[17px] font-bold text-white tracking-tight">${escapeHtml(stack.title)}</h3>
+                                    <p class="text-[12px] text-white/50">${escapeHtml(stack.subtitle)}</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 text-[11px] font-bold tracking-wide">FREE</span>
+                        </div>
+                        <div class="border-t border-white/[0.06] pt-4">
+                            ${toolsHtml}
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-white/[0.06] flex items-center justify-between">
+                            <p class="text-[12px] text-white/40">💰 Total monthly cost: <span class="text-emerald-400 font-semibold">₹0</span></p>
+                            <p class="text-[11px] text-white/30">${stack.tools.length} verified tools</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+        }
+
+        function addAllStacksGrid(stacks) {
+            const container = document.getElementById('messages');
+
+            const stackCards = stacks.map(stack => `
+                <button onclick="sendFollowUp('Build my AI stack for a ${stack.id}')" 
+                    class="p-4 rounded-xl bg-white/[0.04] border border-white/[0.08] hover:border-purple-500/30 hover:bg-white/[0.07] transition-all duration-300 text-left group cursor-pointer">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-[24px]">${stack.emoji}</span>
+                        <h4 class="text-[15px] font-bold text-white tracking-tight group-hover:text-purple-300 transition-colors">${escapeHtml(stack.title)}</h4>
+                    </div>
+                    <p class="text-[12px] text-white/50 leading-snug mb-2">${escapeHtml(stack.subtitle)}</p>
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] text-white/30">${stack.tools.length} tools</span>
+                        <span class="text-[11px] text-emerald-400/70">• Free</span>
+                    </div>
+                </button>
+            `).join('');
+
+            const html = `
+                <div class="mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        ${stackCards}
+                    </div>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+        }
+
+        // ========== WORKFLOW RENDERING ==========
 
         function addWorkflowCards(steps) {
             const container = document.getElementById('messages');

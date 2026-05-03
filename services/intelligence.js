@@ -9,6 +9,84 @@ class DecyIntelligence {
         this.tools = tools;
         this.intentMap = this.buildIntentMap();
         this.allToolsFlat = this.flattenTools();
+
+        // Load pre-built stacks
+        try {
+            this.stacksData = require('../data/stacks.json');
+        } catch (e) {
+            console.warn('[DECY] Could not load stacks.json:', e.message);
+            this.stacksData = { stacks: {}, triggers: {} };
+        }
+    }
+
+    /**
+     * Detect if user is asking for a stack recommendation
+     * Returns: { matched: true, stackId, stack } or { matched: false }
+     */
+    detectStack(message) {
+        const lower = message.toLowerCase();
+
+        // Direct stack request patterns
+        const stackPatterns = [
+            /build\s+(?:my|me|a)?\s*(?:ai\s+)?stack\s+(?:for\s+)?(?:a\s+)?(\w+)/i,
+            /(?:ai\s+)?stack\s+for\s+(?:a\s+)?(\w+)/i,
+            /i(?:'m| am)\s+(?:a\s+)?(\w+)/i,
+            /tools?\s+for\s+(?:a\s+)?(\w+)/i,
+            /best\s+(?:ai\s+)?tools?\s+for\s+(?:a\s+)?(\w+)/i,
+            /recommend\s+(?:ai\s+)?tools?\s+for\s+(?:a\s+)?(\w+)/i,
+            /what\s+(?:ai\s+)?tools?\s+(?:should|do|for)\s+(?:a\s+)?(\w+)/i,
+        ];
+
+        // Check direct patterns first
+        for (const pattern of stackPatterns) {
+            const match = lower.match(pattern);
+            if (match) {
+                const role = match[1].toLowerCase();
+                for (const [stackId, triggers] of Object.entries(this.stacksData.triggers)) {
+                    if (triggers.some(t => role.includes(t) || t.includes(role))) {
+                        return {
+                            matched: true,
+                            stackId,
+                            stack: this.stacksData.stacks[stackId]
+                        };
+                    }
+                }
+            }
+        }
+
+        // Check keyword-based matching
+        let bestMatch = null;
+        let bestScore = 0;
+
+        for (const [stackId, triggers] of Object.entries(this.stacksData.triggers)) {
+            let score = 0;
+            for (const trigger of triggers) {
+                if (lower.includes(trigger)) {
+                    score += trigger.length; // Longer matches = more specific = better
+                }
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                bestMatch = stackId;
+            }
+        }
+
+        if (bestMatch && bestScore >= 5) {
+            return {
+                matched: true,
+                stackId: bestMatch,
+                stack: this.stacksData.stacks[bestMatch]
+            };
+        }
+
+        return { matched: false };
+    }
+
+    /**
+     * Get all available stacks for the browse view
+     */
+    getAllStacks() {
+        return Object.values(this.stacksData.stacks);
     }
 
     /**

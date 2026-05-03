@@ -335,6 +335,45 @@ app.get('/api/tools/all', (req, res) => {
 });
 
 /**
+ * GET /api/stacks
+ * Get all pre-built AI stacks
+ */
+app.get('/api/stacks', (req, res) => {
+    try {
+        const stacks = require('./data/stacks.json');
+        const stackList = Object.values(stacks.stacks).map(s => ({
+            id: s.id,
+            title: s.title,
+            subtitle: s.subtitle,
+            emoji: s.emoji,
+            audience: s.audience,
+            totalCost: s.totalCost,
+            toolCount: s.tools.length
+        }));
+        res.json({ success: true, stacks: stackList });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Failed to load stacks' });
+    }
+});
+
+/**
+ * GET /api/stacks/:id
+ * Get a specific stack by ID
+ */
+app.get('/api/stacks/:id', (req, res) => {
+    try {
+        const stacks = require('./data/stacks.json');
+        const stack = stacks.stacks[req.params.id];
+        if (!stack) {
+            return res.status(404).json({ success: false, error: 'Stack not found' });
+        }
+        res.json({ success: true, stack });
+    } catch (error) {
+        res.status(500).json({ success: false, error: 'Failed to load stack' });
+    }
+});
+
+/**
  * Serve frontend
  */
 app.get('/', (req, res) => {
@@ -343,14 +382,6 @@ app.get('/', (req, res) => {
 
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/admin.html'));
-});
-
-app.get('/select', (req, res) => {
-    res.sendFile(path.join(__dirname, 'select.html'));
-});
-
-app.get('/response', (req, res) => {
-    res.sendFile(path.join(__dirname, 'rsponse.html'));
 });
 
 // Start server

@@ -260,8 +260,42 @@ Please make it polished and ready to use.`;
     async handleChat(message, history = []) {
         console.log(`[DECY] Chat: "${message}" (history: ${history.length} messages)`);
 
-        // Fast local understanding first. This guarantees useful cards/guides even
-        // when API keys are missing, rate-limited, or temporarily down.
+        // STACK DETECTION — intercept stack requests before hitting LLM
+        const stackResult = this.intelligence.detectStack(message);
+        if (stackResult.matched) {
+            console.log(`[DECY] 🎯 Stack detected: ${stackResult.stackId}`);
+            const stack = stackResult.stack;
+            return {
+                success: true,
+                type: 'show_stack',
+                stackId: stackResult.stackId,
+                stack: stack,
+                response: `${stack.emoji} Here's your curated **${stack.title}** — ${stack.tools.length} verified tools that work together perfectly.`,
+                followUps: [
+                    { text: '📋 How to use ' + stack.tools[0].name, message: 'How to use ' + stack.tools[0].name },
+                    { text: '🔄 Show me other stacks', message: 'Show me all available AI stacks' },
+                    { text: '✨ Get prompts for this stack', message: 'Give me ready-to-use prompts for each tool in the ' + stack.title }
+                ]
+            };
+        }
+
+        // Check if user wants to browse all stacks
+        const lowerMsg = message.toLowerCase();
+        if (lowerMsg.includes('all stack') || lowerMsg.includes('browse stack') || lowerMsg.includes('other stack') || lowerMsg.includes('show stack') || lowerMsg.includes('available stack')) {
+            const allStacks = this.intelligence.getAllStacks();
+            return {
+                success: true,
+                type: 'show_all_stacks',
+                stacks: allStacks,
+                response: '🗂️ Here are all the curated AI stacks I\'ve built. Each one has 5 verified free tools that work together:',
+                followUps: allStacks.slice(0, 3).map(s => ({
+                    text: `${s.emoji} ${s.title}`,
+                    message: `Build my AI stack for a ${s.id}`
+                }))
+            };
+        }
+
+        // Fast local understanding — useful cards/guides even when API keys are down
         const localResponse = this.getLocalStructuredResponse(message, history);
         if (localResponse) {
             return localResponse;

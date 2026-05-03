@@ -1,0 +1,286 @@
+{
+  "stacks": {
+    "student": {
+      "id": "student",
+      "title": "Student AI Stack",
+      "subtitle": "Everything you need to ace your academics — ₹0/month",
+      "emoji": "📚",
+      "audience": "College & university students",
+      "totalCost": "Free",
+      "tools": [
+        {
+          "step": 1,
+          "role": "Research",
+          "toolId": "perplexity",
+          "name": "Perplexity AI",
+          "why": "Better than Google for academic research — gives cited answers with sources",
+          "freeLimit": "Unlimited basic searches",
+          "prompt": "Explain [your topic] with academic sources. Include key theories, recent findings, and cite the original papers."
+        },
+        {
+          "step": 2,
+          "role": "Write",
+          "toolId": "notion_ai",
+          "name": "Notion AI",
+          "why": "Organize notes + write essays in one place with AI assistance",
+          "freeLimit": "Free workspace, limited AI queries",
+          "prompt": "Help me outline an essay on [topic]. Include thesis statement, 3 main arguments with evidence, and a conclusion."
+        },
+        {
+          "step": 3,
+          "role": "Present",
+          "toolId": "gamma",
+          "name": "Gamma",
+          "why": "Turn your essay into a stunning presentation in 30 seconds",
+          "freeLimit": "10 free presentations",
+          "prompt": "Create a 10-slide presentation on [topic] for a university class. Professional style, include key data points and visuals."
+        },
+        {
+          "step": 4,
+          "role": "Build",
+          "toolId": "bolt",
+          "name": "Bolt.new",
+          "why": "Create project portfolios and web apps for assignments — no coding needed",
+          "freeLimit": "Daily token limit, resets every day",
+          "prompt": "Build a portfolio website showcasing my [project type] with sections for overview, methodology, results, and a contact form."
+        },
+        {
+          "step": 5,
+          "role": "Polish",
+          "toolId": "grammarly",
+          "name": "Grammarly",
+          "why": "Fix grammar, tone, and clarity before submitting anything",
+          "freeLimit": "Unlimited grammar checks on free tier",
+          "prompt": "Check this text for grammar, clarity, and academic tone. Suggest improvements."
+        }
+      ]
+    },
+    "freelancer": {
+      "id": "freelancer",
+      "title": "Freelancer AI Stack",
+      "subtitle": "Land clients and deliver work faster — ₹0/month",
+      "emoji": "💼",
+      "audience": "Freelancers & solo service providers",
+      "totalCost": "Free",
+      "tools": [
+        {
+          "step": 1,
+          "role": "Portfolio",
+          "toolId": "lovable",
+          "name": "Lovable",
+          "why": "Build a professional portfolio site in 10 minutes with AI",
+          "freeLimit": "Credits-based, free tier generous",
+          "prompt": "Build me a freelancer portfolio website with hero section, services grid, project gallery with hover effects, testimonials, and a contact form. Dark modern theme."
+        },
+        {
+          "step": 2,
+          "role": "Design",
+          "toolId": "canva_design",
+          "name": "Canva",
+          "why": "Create logos, social media posts, proposals — everything visual",
+          "freeLimit": "Generous free tier with templates",
+          "prompt": "Create a professional proposal template for [service type] with company branding, scope of work, timeline, and pricing sections."
+        },
+        {
+          "step": 3,
+          "role": "Write",
+          "toolId": "chatgpt",
+          "name": "ChatGPT",
+          "why": "Draft proposals, cold emails, and client communications instantly",
+          "freeLimit": "GPT-4o mini unlimited",
+          "prompt": "Write a professional proposal for [client name] who needs [service]. Include scope, timeline, deliverables, and a compelling value proposition. Keep it under 300 words."
+        },
+        {
+          "step": 4,
+          "role": "Present",
+          "toolId": "gamma",
+          "name": "Gamma",
+          "why": "Create pitch decks that win clients — from text to slides in seconds",
+          "freeLimit": "10 free presentations",
+          "prompt": "Create a 7-slide pitch deck for my freelance [service] business. Include: problem, solution, my process, portfolio highlights, pricing, and call to action."
+        },
+        {
+          "step": 5,
+          "role": "Automate",
+          "toolId": "zapier",
+          "name": "Zapier",
+          "why": "Auto-send follow-ups, track leads, connect your tools together",
+          "freeLimit": "100 tasks/month free",
+          "prompt": "Set up an automation: when someone fills my contact form, send them a thank-you email and add their details to a Google Sheet."
+        }
+      ]
+    },
+    "founder": {
+      "id": "founder",
+      "title": "Startup Founder Stack",
+      "subtitle": "Launch your startup with AI — ₹0 to start",
+      "emoji": "🚀",
+      "audience": "First-time founders & indie hackers",
+      "totalCost": "Free",
+      "tools": [
+        {
+          "step": 1,
+          "role": "Validate",
+          "toolId": "perplexity",
+          "name": "Perplexity AI",
+          "why": "Research your market, competitors, and audience before writing a line of code",
+          "freeLimit": "Unlimited basic searches",
+          "prompt": "Analyze the market for [your idea]. Who are the top 5 competitors? What's missing? What would a first-time user want? Include market size estimates."
+        },
+        {
+          "step": 2,
+          "role": "Build MVP",
+          "toolId": "lovable",
+          "name": "Lovable",
+          "why": "Go from idea to deployed app in hours, not months",
+          "freeLimit": "Credits-based, enough for an MVP",
+          "prompt": "Build a [type] app with user authentication, a dashboard showing [key metrics], and a landing page with pricing tiers. Modern, clean design."
+        },
+        {
+          "step": 3,
+          "role": "Brand",
+          "toolId": "looka",
+          "name": "Looka",
+          "why": "Generate a complete brand kit — logo, colors, fonts — in minutes",
+          "freeLimit": "Free logo previews",
+          "prompt": "Create a logo for [startup name] in the [industry] space. Modern, minimal, tech-forward style. Color palette should convey trust and innovation."
+        },
+        {
+          "step": 4,
+          "role": "Content",
+          "toolId": "copy_ai",
+          "name": "Copy.ai",
+          "why": "Generate landing page copy, email sequences, and social posts",
+          "freeLimit": "2000 words/month free",
+          "prompt": "Write a hero section for [startup name]. Include a headline (max 8 words), subheadline explaining the value proposition, and 3 feature bullet points."
+        },
+        {
+          "step": 5,
+          "role": "Pitch",
+          "toolId": "gamma",
+          "name": "Gamma",
+          "why": "Create investor-ready pitch decks from your business plan",
+          "freeLimit": "10 free presentations",
+          "prompt": "Create a 12-slide investor pitch deck for [startup name]. Include: problem, solution, market size, business model, traction, team, and ask. YC-style format."
+        }
+      ]
+    },
+    "creator": {
+      "id": "creator",
+      "title": "Content Creator Stack",
+      "subtitle": "Create viral content across every platform — ₹0/month",
+      "emoji": "🎬",
+      "audience": "YouTubers, Instagram creators, TikTokers",
+      "totalCost": "Free",
+      "tools": [
+        {
+          "step": 1,
+          "role": "Script",
+          "toolId": "chatgpt",
+          "name": "ChatGPT",
+          "why": "Write video scripts, captions, and content ideas that hook viewers",
+          "freeLimit": "GPT-4o mini unlimited",
+          "prompt": "Write a YouTube script about [topic] in a conversational tone. Include a hook in the first 5 seconds, 3 main points, and a call to action. Target length: 8 minutes."
+        },
+        {
+          "step": 2,
+          "role": "Thumbnail",
+          "toolId": "ideogram",
+          "name": "Ideogram",
+          "why": "Generate eye-catching thumbnails with perfect text rendering",
+          "freeLimit": "25 images/day",
+          "prompt": "Create a YouTube thumbnail with bold text '[YOUR TITLE]' in a dramatic, high-contrast style. Vibrant colors, expressive facial expression placeholder, clean composition."
+        },
+        {
+          "step": 3,
+          "role": "Edit Video",
+          "toolId": "capcut",
+          "name": "CapCut",
+          "why": "Professional video editing with auto-captions, effects, and transitions — free",
+          "freeLimit": "Fully free with watermark removal",
+          "prompt": "Edit this video with: auto-captions in bold white text, smooth transitions between scenes, trending background music, and zoom effects on key moments."
+        },
+        {
+          "step": 4,
+          "role": "Repurpose",
+          "toolId": "opusclip",
+          "name": "Opus Clip",
+          "why": "Turn one long video into 10 viral short clips automatically",
+          "freeLimit": "60 min/month free",
+          "prompt": "Extract the most engaging 30-60 second clips from this video. Focus on moments with strong hooks, surprising facts, or emotional reactions."
+        },
+        {
+          "step": 5,
+          "role": "Graphics",
+          "toolId": "canva_design",
+          "name": "Canva",
+          "why": "Create channel art, social posts, and brand assets in one place",
+          "freeLimit": "Generous free tier",
+          "prompt": "Create a YouTube channel banner for [channel name] about [topic]. Modern style, include channel name and upload schedule. 2560x1440px."
+        }
+      ]
+    },
+    "developer": {
+      "id": "developer",
+      "title": "Developer AI Stack",
+      "subtitle": "Code faster, ship sooner — all free tiers",
+      "emoji": "⚡",
+      "audience": "Software developers & engineers",
+      "totalCost": "Free",
+      "tools": [
+        {
+          "step": 1,
+          "role": "Code",
+          "toolId": "cursor",
+          "name": "Cursor",
+          "why": "AI-powered code editor that writes, edits, and explains code with your codebase as context",
+          "freeLimit": "500 completions/month free",
+          "prompt": "Build a REST API with Express.js that has user authentication (JWT), CRUD operations for [resource], input validation, and error handling. Include proper project structure."
+        },
+        {
+          "step": 2,
+          "role": "Debug",
+          "toolId": "chatgpt",
+          "name": "ChatGPT",
+          "why": "Debug errors, explain code, and get architecture advice instantly",
+          "freeLimit": "GPT-4o mini unlimited",
+          "prompt": "I'm getting this error: [paste error]. Here's my code: [paste code]. Explain what's wrong, why it happens, and give me the fixed code."
+        },
+        {
+          "step": 3,
+          "role": "Deploy",
+          "toolId": "bolt",
+          "name": "Bolt.new",
+          "why": "Quickly prototype and deploy frontend UIs without context-switching",
+          "freeLimit": "Daily token limit",
+          "prompt": "Build a modern dashboard UI with React that shows [data type] in cards, a sidebar navigation, and a search/filter bar. Deploy-ready with Tailwind CSS."
+        },
+        {
+          "step": 4,
+          "role": "Document",
+          "toolId": "notebooklm",
+          "name": "NotebookLM",
+          "why": "Upload your docs and get an AI that answers questions about YOUR codebase",
+          "freeLimit": "Free with Google account",
+          "prompt": "Analyze this documentation and create a quick-start guide with setup instructions, API reference, and common troubleshooting steps."
+        },
+        {
+          "step": 5,
+          "role": "Automate",
+          "toolId": "zapier",
+          "name": "Zapier",
+          "why": "Connect GitHub, Slack, and deployment tools for automated workflows",
+          "freeLimit": "100 tasks/month free",
+          "prompt": "When a new commit is pushed to main branch on GitHub, run tests, and if they pass, send a Slack notification with the deployment status."
+        }
+      ]
+    }
+  },
+  "triggers": {
+    "student": ["student", "college", "university", "academic", "homework", "assignment", "essay", "thesis", "study", "exam", "school", "education", "learn", "class", "course"],
+    "freelancer": ["freelancer", "freelance", "client", "gig", "contract", "self-employed", "solo", "side hustle", "consulting", "agency"],
+    "founder": ["founder", "startup", "entrepreneur", "launch", "business", "company", "saas", "mvp", "pitch", "investor", "indie hacker", "bootstrapping"],
+    "creator": ["creator", "content", "youtube", "youtuber", "instagram", "tiktok", "influencer", "video", "podcast", "blog", "social media", "vlog"],
+    "developer": ["developer", "coder", "programmer", "engineer", "coding", "software", "dev", "full-stack", "frontend", "backend", "web developer"]
+  }
+}
