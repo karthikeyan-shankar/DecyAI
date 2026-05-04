@@ -13,6 +13,10 @@
             "dest": "/server.js"
         },
         {
+            "src": "/best-ai-tools-for-students",
+            "dest": "/server.js"
+        },
+        {
             "src": "/(.*)",
             "dest": "/public/$1"
         },
