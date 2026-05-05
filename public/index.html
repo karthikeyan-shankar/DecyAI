@@ -1788,6 +1788,55 @@
             return '★'.repeat(full) + '☆'.repeat(empty);
         }
     </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFv_Qb6y6WeFSL_TDuNJHyjiC-vx8wAHU",
+            authDomain: "decyai.firebaseapp.com",
+            projectId: "decyai",
+            storageBucket: "decyai.firebasestorage.app",
+            messagingSenderId: "967161401252",
+            appId: "1:967161401252:web:cd7ca0b8dda2a692723b31",
+            measurementId: "G-HSHPGDJELL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Make signOut globally available
+        window.handleSignOut = async function() {
+            try {
+                await signOut(auth);
+                window.location.reload();
+            } catch (error) {
+                console.error("Sign out error", error);
+            }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            const loginButtons = document.querySelectorAll('a[href="/login"]');
+            
+            if (user) {
+                // User is signed in.
+                const profileHtml = `
+                    <div class="flex items-center gap-2 group relative cursor-pointer" onclick="handleSignOut()">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                            ${user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                        </div>
+                        <div class="absolute top-full right-0 mt-2 bg-ios-bg border border-white/10 rounded-lg p-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                            <span class="text-xs text-red-400 whitespace-nowrap">Sign Out</span>
+                        </div>
+                    </div>
+                `;
+                
+                loginButtons.forEach(btn => {
+                    btn.outerHTML = profileHtml;
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -160,7 +160,7 @@
                 </div>
             </div>
 
-            <button type="button" class="google-button w-full py-3 rounded-xl flex items-center justify-center gap-3 text-white text-sm font-medium">
+            <button type="button" onclick="handleGoogleLogin()" class="google-button w-full py-3 rounded-xl flex items-center justify-center gap-3 text-white text-sm font-medium">
                 <svg viewBox="0 0 24 24" class="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -176,17 +176,55 @@
         </p>
     </div>
 
-    <script>
-        function handleLogin(e) {
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFv_Qb6y6WeFSL_TDuNJHyjiC-vx8wAHU",
+            authDomain: "decyai.firebaseapp.com",
+            projectId: "decyai",
+            storageBucket: "decyai.firebasestorage.app",
+            messagingSenderId: "967161401252",
+            appId: "1:967161401252:web:cd7ca0b8dda2a692723b31",
+            measurementId: "G-HSHPGDJELL"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        window.handleLogin = async function(e) {
             e.preventDefault();
-            // Just for show right now
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
             btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">sync</span>';
-            setTimeout(() => {
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
                 window.location.href = '/';
-            }, 1000);
-        }
+            } catch (error) {
+                alert("Login failed: " + error.message);
+                btn.innerHTML = originalText;
+            }
+        };
+
+        window.handleGoogleLogin = async function() {
+            const btn = document.querySelector('.google-button');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">sync</span>';
+            
+            try {
+                await signInWithPopup(auth, googleProvider);
+                window.location.href = '/';
+            } catch (error) {
+                alert("Google Sign-In failed: " + error.message);
+                btn.innerHTML = originalHTML;
+            }
+        };
     </script>
 </body>
 </html>
