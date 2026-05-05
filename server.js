@@ -385,8 +385,18 @@ app.get('/admin', (req, res) => {
 });
 
 // SEO Landing Pages
-app.get('/best-ai-tools-for-students', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/best-ai-tools-for-students.html'));
+const seoPages = [
+    'best-ai-tools-for-students',
+    'best-ai-tools-for-freelancers',
+    'best-ai-tools-for-founders',
+    'best-ai-tools-for-creators',
+    'best-ai-tools-for-developers'
+];
+
+seoPages.forEach(page => {
+    app.get(`/${page}`, (req, res) => {
+        res.sendFile(path.join(__dirname, `public/${page}.html`));
+    });
 });
 
 // Start server
