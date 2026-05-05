@@ -781,24 +781,12 @@
                 <div id="welcome-state" class="flex-1 flex flex-col items-center justify-center px-4 md:px-8 mt-[-8vh]">
                     <div class="w-full max-w-3xl text-center mb-8 animate-fadeInUp flex flex-col items-center">
                         <h1 class="text-white text-[42px] md:text-[52px] font-serif font-medium leading-[1.1] tracking-normal mb-2 flex items-center justify-center gap-3">
-                            <svg width="44" height="44" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-lg">
-                                <defs>
-                                    <linearGradient id="decyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#EC4899" />
-                                        <stop offset="100%" stop-color="#8B5CF6" />
-                                    </linearGradient>
-                                    <linearGradient id="decyInner" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8" />
-                                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.1" />
-                                    </linearGradient>
-                                </defs>
-                                <!-- Outer glowing ring/D shape -->
-                                <path d="M30 20 h20 c 25 0, 40 15, 40 30 c 0 15, -15 30, -40 30 h-20 v-60 z" fill="url(#decyGrad)" opacity="0.9" />
-                                <!-- Inner glass cutout to form the 'D' -->
-                                <path d="M45 35 h5 c 12 0, 20 8, 20 15 c 0 7, -8 15, -20 15 h-5 v-30 z" fill="#0A0A0A" />
-                                <!-- Glass reflection -->
-                                <path d="M30 20 h20 c 25 0, 40 15, 40 30 c 0 15, -15 30, -40 30 h-20 v-60 z" stroke="url(#decyInner)" stroke-width="2" fill="none" />
-                            </svg>
+                            <div class="relative flex items-center justify-center">
+                                <!-- The Great Vibes D with Gradient -->
+                                <span style="font-family: 'Great Vibes', cursive; background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;" class="text-[54px] font-bold leading-none pr-1">D</span>
+                                <!-- The AI Sparkle/Star -->
+                                <span class="material-symbols-outlined text-[#EC4899] text-[22px] absolute top-[-2px] right-[-8px] animate-pulse drop-shadow-[0_0_8px_rgba(236,72,153,0.6)]">auto_awesome</span>
+                            </div>
                             What do you want to create?
                         </h1>
                     </div>
