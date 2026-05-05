@@ -384,6 +384,10 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/admin.html'));
 });
 
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/login.html'));
+});
+
 // SEO Landing Pages
 const seoPages = [
     'best-ai-tools-for-students',
