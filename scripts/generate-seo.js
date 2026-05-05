@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const stacksData = require('../data/stacks.json');
+const monetization = require('../services/monetization');
 
 const template = fs.readFileSync(path.join(__dirname, '../public/best-ai-tools-for-students.html'), 'utf-8');
 
@@ -48,6 +49,10 @@ const stacks = [
 ];
 
 function generateToolHTML(tool, index) {
+    // Inject affiliate link dynamically
+    const monetizedTool = monetization.monetizeTool({ name: tool.name, url: tool.link });
+    const finalLink = monetizedTool.url;
+
     return `
             <article class="tool-card">
                 <div class="tool-header">
@@ -65,7 +70,7 @@ function generateToolHTML(tool, index) {
                     <div class="prompt-label">Ready-to-use prompt</div>
                     "${tool.prompt}"
                 </div>
-                <a href="${tool.link}" target="_blank" rel="noopener" class="tool-link">Visit ${tool.name} →</a>
+                <a href="${finalLink}" target="_blank" rel="noopener" class="tool-link">Visit ${tool.name} →</a>
             </article>`;
 }
 

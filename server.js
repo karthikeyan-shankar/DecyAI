@@ -9,6 +9,7 @@ const cors = require('cors');
 const path = require('path');
 const RecommendationEngine = require('./services/recommendation');
 const ToolScraper = require('./services/scraper');
+const monetization = require('./services/monetization');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -56,7 +57,7 @@ app.post('/api/chat', async (req, res) => {
         }
 
         const result = await engine.handleChat(message.trim(), history);
-        res.json(result);
+        res.json(monetization.monetizeResponse(result));
     } catch (error) {
         console.error('[DECY] Chat error:', error);
         res.status(500).json({
@@ -86,7 +87,7 @@ app.post('/api/recommend', async (req, res) => {
 
         const recommendations = await engine.getRecommendations(query.trim(), budget, category);
 
-        res.json(recommendations);
+        res.json(monetization.monetizeResponse(recommendations));
     } catch (error) {
         console.error('[DECY] Error:', error);
         res.status(500).json({
@@ -116,7 +117,7 @@ app.post('/api/tools-by-ids', async (req, res) => {
 
         res.json({
             success: true,
-            tools: tools
+            tools: monetization.monetizeTools(tools)
         });
     } catch (error) {
         console.error('[DECY] Error:', error);
